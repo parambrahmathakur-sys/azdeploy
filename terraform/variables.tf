@@ -5,7 +5,7 @@ variable "location" {
 }
 
 variable "resource_group_name" {
-  default = "rg-demo"
+  default = "rg-demo1"
 }
 
 variable "vm_name" {
