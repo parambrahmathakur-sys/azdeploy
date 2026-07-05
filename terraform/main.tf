@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~>4.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~>3.6"
+      }
   }
 }
 
@@ -13,9 +17,14 @@ provider "azurerm" {
   features {}
   subscription_id = var.subscription_id
 }
-
+resource "random_string" "suffix" {
+  length  = 4
+  special = false
+  upper   = false
+}
 resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
+
+  name     = "rg-demo-${random_string.suffix.result}"
   location = var.location
 }
 

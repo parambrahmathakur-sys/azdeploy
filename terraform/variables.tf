@@ -4,10 +4,6 @@ variable "location" {
   default = "East us"
 }
 
-variable "resource_group_name" {
-  default = "rg-demo1"
-}
-
 variable "vm_name" {
   default = "linux-vm01"
 }
