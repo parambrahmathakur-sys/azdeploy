@@ -1,7 +1,7 @@
 variable "subscription_id" {}
 
 variable "location" {
-  default = "West us 3"
+  default = "central us"
 }
 
 variable "vm_name" {
