@@ -2,50 +2,51 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 variables:
-  terraformVersion: '1.8.5'
+  serviceConnection: 'myservcon'
   workingDirectory: 'terraform'
-  serviceConnection: 'myservcon'   # Replace with your service connection name
 
 steps:
 
 - checkout: self
 
-- task: TerraformInstaller@1
-  displayName: Install Terraform
+- task: AzureCLI@2
+  displayName: 'Terraform Deployment'
   inputs:
-    terraformVersion: $(terraformVersion)
-
-- task: TerraformTaskV4@4
-  displayName: Terraform Init
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
+    azureSubscription: '$(serviceConnection)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
     workingDirectory: '$(workingDirectory)'
-    environmentServiceNameAzureRM: '$(serviceConnection)'
+    inlineScript: |
 
-- task: TerraformTaskV4@4
-  displayName: Terraform Validate
-  inputs:
-    provider: 'azurerm'
-    command: 'validate'
-    workingDirectory: '$(workingDirectory)'
+      echo "========== Azure Login =========="
+      az account show
 
-- task: TerraformTaskV4@4
-  displayName: Terraform Plan
-  inputs:
-    provider: 'azurerm'
-    command: 'plan'
-    workingDirectory: '$(workingDirectory)'
-    environmentServiceNameAzureRM: '$(serviceConnection)'
+      echo "========== Install Terraform =========="
+      TERRAFORM_VERSION=1.8.5
 
-- task: TerraformTaskV4@4
-  displayName: Terraform Apply
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    workingDirectory: '$(workingDirectory)'
-    environmentServiceNameAzureRM: '$(serviceConnection)'
-    commandOptions: '-auto-approve'
+      wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+      unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+      sudo mv terraform /usr/local/bin/
+
+      terraform version
+
+      echo "========== Terraform Init =========="
+
+      terraform init
+
+      echo "========== Terraform Validate =========="
+
+      terraform validate
+
+      echo "========== Terraform Plan =========="
+
+      terraform plan
+
+      echo "========== Terraform Apply =========="
+
+      terraform apply -auto-approve
