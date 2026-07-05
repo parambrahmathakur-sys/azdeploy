@@ -1,7 +1,7 @@
 variable "subscription_id" {}
 
 variable "location" {
-  default = "Central India"
+  default = "East us"
 }
 
 variable "resource_group_name" {
